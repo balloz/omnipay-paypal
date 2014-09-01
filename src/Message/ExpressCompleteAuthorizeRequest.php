@@ -7,6 +7,14 @@ namespace Omnipay\PayPal\Message;
  */
 class ExpressCompleteAuthorizeRequest extends AbstractRequest
 {
+    public function setPayerId($payerId) {
+        $this->setParameter('payerId', $payerId);
+    }
+
+    public function getPayerId() {
+        return $this->getParameter('payerId');
+    }
+
     public function getData()
     {
         $this->validate('amount');
@@ -20,8 +28,8 @@ class ExpressCompleteAuthorizeRequest extends AbstractRequest
         $data['PAYMENTREQUEST_0_DESC'] = $this->getDescription();
         $data['PAYMENTREQUEST_0_NOTIFYURL'] = $this->getNotifyUrl();
 
-        $data['TOKEN'] = $this->httpRequest->query->get('token');
-        $data['PAYERID'] = $this->httpRequest->query->get('PayerID');
+        $data['TOKEN'] = $this->getToken() ?: $this->httpRequest->query->get('token');
+        $data['PAYERID'] = $this->getPayerId() ?: $this->httpRequest->query->get('PayerID');
 
         $data = array_merge($data, $this->getItemData());
 

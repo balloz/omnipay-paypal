@@ -81,4 +81,35 @@ class ExpressCompleteAuthorizeRequestTest extends TestCase
         $this->assertSame(1, $data['L_PAYMENTREQUEST_0_QTY1']);
         $this->assertSame('40.00', $data['L_PAYMENTREQUEST_0_AMT1']);
     }
+
+    public function testSetPayerIdOverride() {
+        $this->request->setAmount('1.23');
+        $this->request->setCurrency('USD');
+        $this->request->setTransactionId('ABC-123');
+        $this->request->setUsername('testuser');
+        $this->request->setPassword('testpass');
+        $this->request->setSignature('SIG');
+        $this->request->setSubject('SUB');
+        $this->request->setDescription('DESC');
+        $this->request->setNotifyUrl('https://www.example.com/notify');
+        $this->request->setPayerId('Payer-5678');
+
+        $expected = array();
+        $expected['METHOD'] = 'DoExpressCheckoutPayment';
+        $expected['PAYMENTREQUEST_0_PAYMENTACTION'] = 'Authorization';
+        $expected['PAYMENTREQUEST_0_AMT'] = '1.23';
+        $expected['PAYMENTREQUEST_0_CURRENCYCODE'] = 'USD';
+        $expected['PAYMENTREQUEST_0_INVNUM'] = 'ABC-123';
+        $expected['PAYMENTREQUEST_0_DESC'] = 'DESC';
+        $expected['PAYMENTREQUEST_0_NOTIFYURL'] = 'https://www.example.com/notify';
+        $expected['USER'] = 'testuser';
+        $expected['PWD'] = 'testpass';
+        $expected['SIGNATURE'] = 'SIG';
+        $expected['SUBJECT'] = 'SUB';
+        $expected['VERSION'] = ExpressCompleteAuthorizeRequest::API_VERSION;
+        $expected['TOKEN'] = 'TOKEN1234';
+        $expected['PAYERID'] = 'Payer-5678';
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
 }
